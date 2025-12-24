@@ -2,21 +2,22 @@ package commands
 
 import(
 	"fmt"
-	"NotesApp/utilities.go"
-	"NotesApp/models.go"
+	"time"
+	"NotesApp/utilities"
+	"NotesApp/models"
 )
 
 func Add(text string) error{
-	notes, err := utilities.loadNotes()
+	notes, err := utilities.LoadNotes()
 	if err !=nil{
 		return err
 	}
-	newID :=utilities.nextID(notes)
+	newID :=utilities.NextID(notes)
 	note := models.Note{
 		ID: newID,
 		Text: text,
-		CreatedAt: time.Now()
-		UpdatedAt: nil
+		CreatedAt: time.Now(),
+		UpdatedAt: nil,
 	}
 	notes = append(notes, note)
 

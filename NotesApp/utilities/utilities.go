@@ -1,29 +1,19 @@
-package main
+package utilities
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
-	"time"
+	"NotesApp/models"
 )
 
-type Note struct {
-	ID        int
-	Text      string
-	CreatedAt time.Time
-}
 
-func newNote(Text) *Note {
-	n := Note()
-}
-
-func loadNotes() ([]Note, error) {
+func LoadNotes() ([]models.Note, error) {
 	file, err := os.Open("data/notes.json")
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
-	var notes []Note
+	var notes []models.Note
 	decoder := json.NewDecoder(file)
 	if err := decoder.Decode(&notes); err != nil {
 		return nil, err
@@ -31,18 +21,21 @@ func loadNotes() ([]Note, error) {
 	return notes, nil
 }
 
-func nextID(notes []Note) int {
-	if len(notes)<1:
+func NextID(notes []models.Note) int {
+	if len(notes)<1{
 		return 1
-	else:
+	}else{
 		var maxID int = 0
 		for _, note := range notes {
 			if note.ID > maxID {
 				maxID = note.ID
 			}
 		}
-	return maxID+1
+		return maxID+1
+	}
+	
 }
+
 func SaveNotes(notes []models.Note) error {
 	file, err := os.Create("data/notes.json")
 	if err != nil {
