@@ -16,8 +16,10 @@ func Delete(id int) error{
 	for _,note:=range notes{
 		if note.ID==id{
 			found = true
+		}else{
+			newnotes=append(newnotes, note)
 		}
-		newnotes=append(newnotes, note)
+		
 	}
 	if !found {
         return fmt.Errorf("no note found with ID %d", id)
