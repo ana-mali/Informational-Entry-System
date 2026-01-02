@@ -9,8 +9,13 @@ import (
 
 func main() {
 	//Global Validation 
-	if len(os.Args) < 2 || len(os.Args)<3 {
+	if len(os.Args) < 2 ||len(os.Args) < 3{
 		printHelp("No command provided.")
+		return
+	}
+	app := os.Args[1]
+	if app!="app"{
+		printHelp(fmt.Sprintf("Unknown application: %s", app))
 		return
 	}
 	cmd := os.Args[2]
@@ -61,7 +66,7 @@ func printHelp(msg string) {
 	fmt.Println(`Notes CLI — Personal Notes Manager
 
 Usage:
-  notes <command> [arguments]
+  app <command> [arguments]
 
 Commands:
   add <text>        Add a new note
@@ -70,8 +75,8 @@ Commands:
   help              Show this help
 
 Examples:
-  notes add "Buy groceries"
-  notes list
-  notes delete 2
+  app add "Buy groceries"
+  app list
+  app delete 2
 `)
 }
