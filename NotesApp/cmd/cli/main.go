@@ -3,75 +3,36 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
-	"NotesApp/services"
+	"NotesApp/cmd/cli/handlers"
 )
-
 func main() {
-	//Global Validation 
 	if len(os.Args) < 2 ||len(os.Args) < 3{
 		printHelp("No command provided.")
 		return
 	}
+	if len(os.Args) < 4 {
+		printHelp("")
+		return
+	}
 	app := os.Args[1]
-	if app!="app"{
-		printHelp(fmt.Sprintf("Unknown application: %s", app))
+	resource := os.Args[2]
+	command := os.Args[3]
+	args := os.Args[4:]
+
+	if app != "app" {
+		printHelp("Unknown application")
 		return
 	}
 
-	//Command validations and executions
-	cmd := os.Args[2]
-	switch cmd {
-	case "help", "--help":
-		printHelp("")
-		return
-
-	case "add":
-		if len(os.Args) < 4 {
-			fmt.Println("Please provide note text.")
-			return
-		}
-		
-		note, err := services.AddNote(os.Args[3])
-		if err != nil {
-			fmt.Println("Error:", err)
-		} else {
-			fmt.Println("Note added with ID:", note.ID)
-		}
-
-		
-
-	case "list":
-		notes, err := services.ListNotes()
-		if err != nil {
-			fmt.Println("Error:", err)
-		}else if len(notes)==0 {
-			fmt.Println("No notes found.")
-		}else{
-			for _, note := range notes {
-				fmt.Printf("[%d] %s\n", note.ID, note.Text)
-			}
-		}
-
-	case "delete":
-		if len(os.Args) < 4  {
-			fmt.Println("Please provide a note ID.")
-			return
-		}
-
-		id, err := strconv.Atoi(os.Args[3])
-		if err != nil {
-			fmt.Println("Note ID must be a number.")
-			return
-		}
-		err = services.DeleteNote(id)
-		if err != nil {
-			fmt.Println("Error:", err)
-		}else{
-			fmt.Println("Note deleted with ID:", id)
-		}
+	switch resource {
+	case "notes":
+		handlers.HandleNotes(command, args)
+	case "lists":
+		handlers.HandleLists(command, args)
+	case "tasks":
+		handlers.HandleTasks(command, args)
 	default:
-		printHelp(fmt.Sprintf("Unknown command: %s", cmd))
+		fmt.Println("Unknown resource:", resource)
 	}
 }
 
@@ -81,20 +42,32 @@ func printHelp(msg string) {
 		fmt.Println()
 	}
 
-	fmt.Println(`Notes CLI — Personal Notes Manager
+	fmt.Println(`Personal Information Organizer
 
 Usage:
-  app <command> [arguments]
+	./cmd/cli app <domain> <command> [arguments]
+Domains:
+	notes		Manage personal notes
+	list		Manage lists and list items 
+	task		Manage tasks
 
 Commands:
-  add <text>        Add a new note
-  list              List all notes
-  delete <id>       Delete a note
-  help              Show this help
+  <domain> add <text>        			Add a new domain
+  <domain> list              			List all data from domain 
+  <domain> delete <id>       			Delete a domain
+  help            		     			Show this help
+  list item add <ListID> <text>			Add a new item to a list
+  list item delete <ListID> <ItemID>	Delete an item from a list
 
 Examples:
-  app add "Buy groceries"
-  app list
-  app delete 2
+  app notes add "Make a list"
+  app notes list 
+  app notes delete 2
+  app list create "Groceries"
+  app list item add 1 "Buy milk"
+  app task add "Submit Report" --priority high --due 2026-02-01
+  app task delete 1
+  app list item remove 1 3
+
 `)
 }

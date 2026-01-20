@@ -1,0 +1,60 @@
+package services
+import(
+	"fmt"
+	"time"
+	"NotesApp/utilities"
+	"NotesApp/models"
+)
+func AddTask(name string, priority *string, due *time.Time) (models.Task, error) {
+	tasks, err := utilities.LoadTasks()
+	if err != nil {
+		return models.Task{}, err
+	}
+
+	newID := utilities.NextID(utilities.AsIdentifiable(tasks))
+
+	task := models.Task{
+		ID:        newID,
+		Name:      name,
+		CreatedAt: time.Now(),
+		Priority:  priority, // *string or nil
+		DueDate:   due, // nil or *time.Time
+	}
+
+	tasks = append(tasks, task)
+
+	if err := utilities.SaveTasks(tasks); err != nil {
+		return models.Task{}, err
+	}
+
+	return task, nil
+}
+func DeleteTask(id int) error{
+	tasks, err := utilities.LoadTasks()
+	if err !=nil{
+		return err
+	}
+	var newtasks []models.Task
+	found :=false
+	for _,task:=range tasks{
+		if task.ID==id{
+			found = true
+		}else{
+			newtasks=append(newtasks, task)
+		}
+	}
+	if !found {
+        return fmt.Errorf("no task found with ID %d", id)
+    }
+	if err := utilities.SaveTasks(newtasks); err != nil {
+		return err
+	}
+	return nil
+}
+func ListTasks() ([]models.Task, error){
+    tasks, err := utilities.LoadTasks()
+    if err != nil {
+        return nil,err
+    }
+    return tasks, nil
+}

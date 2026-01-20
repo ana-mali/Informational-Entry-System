@@ -12,7 +12,7 @@ func Add(text string) error{
 	if err !=nil{
 		return err
 	}
-	newID :=utilities.NextID(notes)
+	newID := NextNoteID(notes)
 	note := models.Note{
 		ID: newID,
 		Text: text,
@@ -26,4 +26,11 @@ func Add(text string) error{
 	}
 	fmt.Println("Note added with ID:", newID)
 	return nil
+}
+func NextNoteID(notes []models.Note) int {
+	items := make([]models.Identifiable, len(notes))
+	for i, note := range notes {
+		items[i] = note
+	}
+	return utilities.NextID(items)
 }

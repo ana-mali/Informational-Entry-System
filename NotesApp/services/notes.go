@@ -6,14 +6,16 @@ import(
 	"NotesApp/models"
 )
 
+
 func AddNote(text string) (models.Note, error){
 	notes, err := utilities.LoadNotes()
 	if err !=nil{
 		return models.Note{},err
 	}
-	newID :=utilities.NextID(notes)
+	newid := utilities.NextID(utilities.AsIdentifiable(notes))
+
 	note := models.Note{
-		ID: newID,
+		ID: newid,
 		Text: text,
 		CreatedAt: time.Now(),
 		UpdatedAt: nil,

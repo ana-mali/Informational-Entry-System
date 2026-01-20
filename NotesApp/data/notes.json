@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "ID": 1,
+    "Text": "make a list",
+    "CreatedAt": "2026-01-20T16:32:57.3540148-05:00",
+    "UpdatedAt": null
+  },
+  {
+    "ID": 2,
+    "Text": "make a list with multiple items",
+    "CreatedAt": "2026-01-20T16:33:12.7025039-05:00",
+    "UpdatedAt": null
+  }
+]
