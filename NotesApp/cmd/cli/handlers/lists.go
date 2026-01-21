@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"NotesApp/services"
+	"flag"
 )
 
 func HandleLists(cmd string, args []string) {
@@ -66,6 +67,36 @@ func HandleLists(cmd string, args []string) {
 			return
 		}
 		fmt.Println("List deleted:", id)
+	case "edit":
+		if len(args) < 2 {
+			fmt.Println("Usage:app list edit <listID> <new name>")
+			return
+		}
+
+		id, err := strconv.Atoi(args[0])
+		if err != nil {
+			fmt.Println("List ID must be a number.")
+			return
+		}
+		fs := flag.NewFlagSet("edit", flag.ExitOnError)
+		name := fs.String("name", "", "New name for the list")
+
+		if err := fs.Parse(args[1:]); err != nil {
+			fmt.Println("Error parsing flags:", err)
+			return
+		}
+
+		if *name == "" {
+			fmt.Println("Please provide new name with --name")
+			return
+		}
+		list, err := services.EditList(id, *name)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+
+		fmt.Println("List updated with ID:", list.ID)
 	case "item":
 		if len(args) < 1 {
 			fmt.Println("Please provide an item command (add, remove).")
@@ -122,6 +153,10 @@ func HandleLists(cmd string, args []string) {
 			}
 
 			fmt.Println("Item removed.")
+		// case "edit":
+
+		default:
+			fmt.Println("Unknown list item command: ",cmd)
 		}
 	default:
 		fmt.Println("Unknown list command:", cmd)

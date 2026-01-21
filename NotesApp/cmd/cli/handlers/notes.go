@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"NotesApp/services"
 	"strconv"
+	"flag"
 )
 
 func HandleNotes(cmd string, args []string) {
@@ -50,6 +51,35 @@ func HandleNotes(cmd string, args []string) {
 			return
 		}
 		fmt.Println("Note deleted:", id)
+	case "edit":
+		if len(args) < 2 {
+			fmt.Println("Usage: app notes edit <noteID> <new text>")
+			return
+		}
+
+		id, err := strconv.Atoi(args[0])
+		if err != nil {
+			fmt.Println("Note ID must be a number.")
+			return
+		}
+		fs := flag.NewFlagSet("edit", flag.ExitOnError)
+		text := fs.String("text", "", "New text for the note")
+		if err := fs.Parse(args[1:]); err != nil {
+			fmt.Println("Error parsing flags:", err)
+			return
+		}
+
+		if *text == "" {
+			fmt.Println("Please provide new text with --text")
+			return
+		}
+		note, err := services.EditNote(id, *text)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+
+		fmt.Println("Note updated with ID:", note.ID)
 
 	default:
 		fmt.Println("Unknown notes command:", cmd)

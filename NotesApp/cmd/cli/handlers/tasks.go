@@ -5,6 +5,7 @@ import (
 	"NotesApp/services"
 	"strconv"
 	"time"
+	"flag"
 )
 
 func HandleTasks(cmd string, args []string) {
@@ -99,6 +100,78 @@ func HandleTasks(cmd string, args []string) {
 			return
 		}
 		fmt.Println("Task deleted:", id)
+
+	case "edit":
+		if len(args) < 1 {
+			fmt.Println("Please provide task ID.")
+			return
+		}
+
+		id, err := strconv.Atoi(args[0])
+		if err != nil {
+			fmt.Println("Task ID must be a number.")
+			return
+		}
+
+		fs := flag.NewFlagSet("task edit", flag.ExitOnError)
+
+		name := fs.String("name", "", "Update task name")
+		priority := fs.String("priority", "", "Update task priority")
+		dueStr := fs.String("due", "", "Update task due date (YYYY-MM-DD)")
+		clear := fs.String("clear", "", "Clear a field (priority | due)")
+
+		if err := fs.Parse(args[1:]); err != nil {
+			return
+		}
+
+		// ---- name ----
+		var namePtr *string
+		if *name != "" {
+			namePtr = name
+		}
+
+		// ---- priority ----s
+		var priorityPtr *string
+		clearPriority := false
+
+		if *priority != "" {
+			priorityPtr = priority
+		}
+		if *clear == "priority" {
+			clearPriority = true
+		}
+
+		// ---- due date ----
+		var duePtr *time.Time
+		clearDue := false
+
+		if *dueStr != "" {
+			parsed, err := time.Parse("2006-01-02", *dueStr)
+			if err != nil {
+				fmt.Println("Invalid date format. Use YYYY-MM-DD.")
+				return
+			}
+			duePtr = &parsed
+		}
+		if *clear == "due" {
+			clearDue = true
+		}
+
+		task, err := services.EditTask(
+			id,
+			namePtr,
+			priorityPtr,
+			duePtr,
+			clearPriority,
+			clearDue,
+		)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+
+		fmt.Println("Task updated with id: ",task.ID)
+		
 
 	default:
 		fmt.Println("Unknown task command:", cmd)

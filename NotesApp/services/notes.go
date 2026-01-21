@@ -57,3 +57,26 @@ func ListNotes() ([]models.Note, error){
 
     return notes, nil
 }
+func EditNote(id int, text string) (models.Note, error) {
+	notes, err := utilities.LoadNotes()
+	if err != nil {
+		return models.Note{}, err
+	}
+	var notetoedit *models.Note
+	for i := range notes {
+		if notes[i].ID == id {
+			notetoedit = &notes[i]
+			break
+		}
+	}
+	if notetoedit == nil {
+		return models.Note{}, fmt.Errorf("Note not found.")
+	}
+	notetoedit.Text = text
+	now := time.Now()
+	notetoedit.UpdatedAt = &now
+	if err := utilities.SaveNotes(notes); err != nil {
+		return models.Note{}, err
+	}
+	return *notetoedit, err
+}

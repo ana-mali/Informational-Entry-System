@@ -58,3 +58,45 @@ func ListTasks() ([]models.Task, error){
     }
     return tasks, nil
 }
+
+func EditTask(
+	id int,
+	name *string,
+	priority *string,
+	due *time.Time,
+	clearPriority bool,
+	clearDue bool,
+) (models.Task, error) {
+	tasks, err := utilities.LoadTasks()
+	if err != nil {
+		return models.Task{}, err
+	}
+	var tasktoedit *models.Task
+	for i := range tasks {
+		if tasks[i].ID == id {
+			tasktoedit = &tasks[i]
+			break
+		}
+	}
+	if tasktoedit == nil {
+		return models.Task{}, fmt.Errorf("Task not found.")
+	}
+
+	if clearPriority {
+		tasktoedit.Priority = nil
+	} else if priority != nil {
+		tasktoedit.Priority = priority
+	}
+
+	if clearDue {
+		tasktoedit.DueDate = nil
+	} else if due != nil {
+		tasktoedit.DueDate = due
+	}
+	now := time.Now()
+	tasktoedit.UpdatedAt = &now
+	if err := utilities.SaveTasks(tasks); err != nil {
+		return models.Task{}, err
+	}
+	return *tasktoedit, err
+}

@@ -30,6 +30,7 @@ type Item struct{
 	Text string
 	Check bool 
 	CreatedAt time.Time
+	UpdatedAt *time.Time
 }
 
 func (n Note) GetID() int {

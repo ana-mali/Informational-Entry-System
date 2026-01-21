@@ -1,9 +1,9 @@
 package utilities
 
 import (
+	"NotesApp/models"
 	"encoding/json"
 	"os"
-	"NotesApp/models"
 )
 
 func LoadLists() ([]models.List, error) {
@@ -32,16 +32,16 @@ func LoadNotes() ([]models.Note, error) {
 	}
 	return notes, nil
 }
-func LoadTasks() ([]models.Task, error){
-	file,err := os.Open("data/tasks.json")
-	if err != nil{
-		return nil,err
+func LoadTasks() ([]models.Task, error) {
+	file, err := os.Open("data/tasks.json")
+	if err != nil {
+		return nil, err
 	}
 	defer file.Close()
-	var tasks []models.Task 
+	var tasks []models.Task
 	decoder := json.NewDecoder(file)
 	if err := decoder.Decode(&tasks); err != nil {
-		return nil,err
+		return nil, err
 	}
 	return tasks, nil
 }
@@ -54,7 +54,6 @@ func NextID(items []models.Identifiable) int {
 	}
 	return maxID + 1
 }
-
 
 func SaveNotes(notes []models.Note) error {
 	file, err := os.Create("data/notes.json")
@@ -100,11 +99,11 @@ func AsIdentifiable[T models.Identifiable](items []T) []models.Identifiable {
 	return result
 }
 func NextItemID(items []models.Item) int {
-    maxID := 0
-    for _, item := range items {
-        if item.ID > maxID {
-            maxID = item.ID
-        }
-    }
-    return maxID + 1
+	maxID := 0
+	for _, item := range items {
+		if item.ID > maxID {
+			maxID = item.ID
+		}
+	}
+	return maxID + 1
 }
