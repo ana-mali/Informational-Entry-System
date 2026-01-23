@@ -99,14 +99,11 @@ func HandleLists(cmd string, args []string) {
 		fmt.Println("List updated with ID:", list.ID)
 	case "item":
 		if len(args) < 1 {
-			fmt.Println("Please provide an item command (add, remove).")
+			fmt.Println("Please provide an item command (add, remove, edit).")
 			return
 		}
-
 		itemCmd := args[0]
-
 		switch itemCmd {
-
 		case "add":
 			if len(args) < 3 {
 				fmt.Println("Usage: list item add <listID> \"item text\"")
@@ -153,7 +150,64 @@ func HandleLists(cmd string, args []string) {
 			}
 
 			fmt.Println("Item removed.")
-		// case "edit":
+		case "edit":
+			if len(args) < 4 {
+				fmt.Println("Usage: app lists item edit <listID> <itemID> [--text \"...\"] [--check true|false]")
+				return
+			}
+
+			listID, err := strconv.Atoi(args[1])
+			if err != nil {
+				fmt.Println("List ID must be a number.")
+				return
+			}
+
+			itemID, err := strconv.Atoi(args[2])
+			if err != nil {
+				fmt.Println("Item ID must be a number.")
+				return
+			}
+
+			fs := flag.NewFlagSet("item edit", flag.ExitOnError)
+
+			text := fs.String("text", "", "Edit item text")
+			checkStr := fs.String("check", "", "Edit item check (true/false)")
+
+			if err := fs.Parse(args[3:]); err != nil {
+				fmt.Println("Error parsing flags:", err)
+				return
+			}
+
+			fmt.Println("DEBUG parsed flags:", *text, *checkStr)
+
+			var textPtr *string
+			if *text != "" {
+				textPtr = text
+			}
+
+			var checkPtr *bool
+			if *checkStr != "" {
+				val, err := strconv.ParseBool(*checkStr)
+				if err != nil {
+					fmt.Println("Check must be true or false.")
+					return
+				}
+				checkPtr = &val
+			}
+
+			if textPtr == nil && checkPtr == nil {
+				fmt.Println("Nothing to edit. Provide --text or --check.")
+				return
+			}
+
+			item, err := services.EditItem(listID, itemID, textPtr, checkPtr)
+			if err != nil {
+				fmt.Println("Error:", err)
+				return
+			}
+
+			fmt.Println("Item updated:", item.ID)
+
 
 		default:
 			fmt.Println("Unknown list item command: ",cmd)

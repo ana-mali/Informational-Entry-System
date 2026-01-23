@@ -102,8 +102,8 @@ func HandleTasks(cmd string, args []string) {
 		fmt.Println("Task deleted:", id)
 
 	case "edit":
-		if len(args) < 1 {
-			fmt.Println("Please provide task ID.")
+		if len(args) < 2 {
+			fmt.Println("Usage: app tasks edit <taskID> <flag> <new data>..")
 			return
 		}
 
@@ -115,37 +115,35 @@ func HandleTasks(cmd string, args []string) {
 
 		fs := flag.NewFlagSet("task edit", flag.ExitOnError)
 
-		name := fs.String("name", "", "Update task name")
-		priority := fs.String("priority", "", "Update task priority")
-		dueStr := fs.String("due", "", "Update task due date (YYYY-MM-DD)")
+		name := fs.String("name", "", "Edit task name")
+		priority := fs.String("priority", "", "Edit task priority")
+		dueStr := fs.String("due", "", "Edit task due date (YYYY-MM-DD)")
 		clear := fs.String("clear", "", "Clear a field (priority | due)")
-
 		if err := fs.Parse(args[1:]); err != nil {
+			fmt.Println("Error parsing flags:", err)
 			return
 		}
 
-		// ---- name ----
 		var namePtr *string
 		if *name != "" {
 			namePtr = name
 		}
 
-		// ---- priority ----s
 		var priorityPtr *string
 		clearPriority := false
-
-		if *priority != "" {
-			priorityPtr = priority
-		}
 		if *clear == "priority" {
 			clearPriority = true
+		} else if *priority != "" {
+			priorityPtr = priority
 		}
 
-		// ---- due date ----
+
 		var duePtr *time.Time
 		clearDue := false
 
-		if *dueStr != "" {
+		if *clear == "due" {
+			clearDue = true
+		} else if *dueStr != "" {
 			parsed, err := time.Parse("2006-01-02", *dueStr)
 			if err != nil {
 				fmt.Println("Invalid date format. Use YYYY-MM-DD.")
@@ -153,8 +151,13 @@ func HandleTasks(cmd string, args []string) {
 			}
 			duePtr = &parsed
 		}
+
 		if *clear == "due" {
 			clearDue = true
+		}
+		if namePtr == nil && priorityPtr == nil && duePtr == nil && !clearPriority && !clearDue {
+			fmt.Println("No changes provided. Use flags to edit the task.")
+			return
 		}
 
 		task, err := services.EditTask(
@@ -171,7 +174,6 @@ func HandleTasks(cmd string, args []string) {
 		}
 
 		fmt.Println("Task updated with id: ",task.ID)
-		
 
 	default:
 		fmt.Println("Unknown task command:", cmd)

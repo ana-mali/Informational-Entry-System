@@ -6,29 +6,55 @@
       {
         "ID": 1,
         "Text": "eggs",
-        "Check": false,
-        "CreatedAt": "2026-01-20T17:05:23.9785051-05:00"
+        "Check": true,
+        "CreatedAt": "2026-01-20T17:05:23.9785051-05:00",
+        "UpdatedAt": "2026-01-22T22:55:53.1105666-05:00"
       },
       {
         "ID": 2,
         "Text": "milk",
         "Check": false,
-        "CreatedAt": "2026-01-20T17:26:14.4005005-05:00"
+        "CreatedAt": "2026-01-20T17:26:14.4005005-05:00",
+        "UpdatedAt": null
       },
       {
         "ID": 3,
         "Text": "bread",
         "Check": false,
-        "CreatedAt": "2026-01-20T17:26:19.3992243-05:00"
+        "CreatedAt": "2026-01-20T17:26:19.3992243-05:00",
+        "UpdatedAt": "2026-01-22T22:56:33.2050982-05:00"
       },
       {
         "ID": 4,
         "Text": "butter",
         "Check": false,
-        "CreatedAt": "2026-01-20T17:26:27.5700191-05:00"
+        "CreatedAt": "2026-01-20T17:26:27.5700191-05:00",
+        "UpdatedAt": null
+      },
+      {
+        "ID": 5,
+        "Text": "strawberries",
+        "Check": false,
+        "CreatedAt": "2026-01-21T14:03:06.1166523-05:00",
+        "UpdatedAt": null
       }
     ],
     "CreatedAt": "2026-01-20T17:04:59.4721881-05:00",
-    "UpdatedAt": "2026-01-20T17:26:27.5700191-05:00"
+    "UpdatedAt": "2026-01-22T22:56:33.2050982-05:00"
+  },
+  {
+    "ID": 2,
+    "Name": "Reasons to love",
+    "Items": [
+      {
+        "ID": 1,
+        "Text": "God",
+        "Check": false,
+        "CreatedAt": "2026-01-22T21:26:46.1861822-05:00",
+        "UpdatedAt": null
+      }
+    ],
+    "CreatedAt": "2026-01-22T21:26:28.8271452-05:00",
+    "UpdatedAt": "2026-01-22T22:58:35.4641599-05:00"
   }
 ]

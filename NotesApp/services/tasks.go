@@ -18,7 +18,7 @@ func AddTask(name string, priority *string, due *time.Time) (models.Task, error)
 		Name:      name,
 		CreatedAt: time.Now(),
 		Priority:  priority, // *string or nil
-		DueDate:   due, // nil or *time.Time
+		DueDate:   due, // *time.Time or nil 
 	}
 
 	tasks = append(tasks, task)
@@ -81,7 +81,9 @@ func EditTask(
 	if tasktoedit == nil {
 		return models.Task{}, fmt.Errorf("Task not found.")
 	}
-
+	if name != nil {
+		tasktoedit.Name = *name
+	}
 	if clearPriority {
 		tasktoedit.Priority = nil
 	} else if priority != nil {

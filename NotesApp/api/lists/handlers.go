@@ -55,7 +55,7 @@ func deleteList(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// POST a new item to a list using ID and text
+// POST a new item to a list using a list ID and text for the item
 func addItem(w http.ResponseWriter, r *http.Request) {
 	listIDStr := r.PathValue("listID")
 	listID, err := strconv.Atoi(listIDStr)

@@ -62,7 +62,7 @@ func HandleNotes(cmd string, args []string) {
 			fmt.Println("Note ID must be a number.")
 			return
 		}
-		fs := flag.NewFlagSet("edit", flag.ExitOnError)
+		fs := flag.NewFlagSet("note edit", flag.ExitOnError)
 		text := fs.String("text", "", "New text for the note")
 		if err := fs.Parse(args[1:]); err != nil {
 			fmt.Println("Error parsing flags:", err)

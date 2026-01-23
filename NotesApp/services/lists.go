@@ -155,37 +155,43 @@ func EditList(id int, name string) (models.List, error) {
 	}
 	return *listtoedit, err
 }
-// func EditItem(listid int, itemid int, text *string, check *bool) (models.Note, error) {
-// 	lists, err := utilities.LoadLists()
-// 	if err != nil {
-// 		return models.List{}, err
-// 	}
-// 	var listtoedit *models.List
-// 	var itemtoedit *models.Item
-// 	for i := range lists {
-// 		if lists[i].ID == listid {
-// 			listtoedit = &lists[i]
-// 			break
-// 		}
-// 	}
-// 	if listtoedit == nil {
-// 		return models.List{}, fmt.Errorf("List not found.")
-// 	}
-// 	for i := range listtoedit.Items{
-// 		if listtoedit.Items[i].ID==itemid{
-// 			itemtoedit = &listtoedit.Items[i]
-// 			break
-// 		}
-// 	}
-
-// 	notetoedit.Text = text
-// 	now := time.Now()
-// 	notetoedit.UpdatedAt = &now
-// 	if err := utilities.SaveNotes(notes); err != nil {
-// 		return models.Note{}, err
-// 	}
-// 	if text!= nil{
-
-// 	}
-// 	return *notetoedit, err
-// }
+func EditItem(listid int, itemid int, text *string, check *bool) (models.Item, error) {
+	lists, err := utilities.LoadLists()
+	if err != nil {
+		return models.Item{}, err
+	}
+	var listtoedit *models.List
+	var itemtoedit *models.Item
+	for i := range lists {
+		if lists[i].ID == listid {
+			listtoedit = &lists[i]
+			break
+		}
+	}
+	if listtoedit == nil {
+		return models.Item{}, fmt.Errorf("List not found.")
+	}
+	for i := range listtoedit.Items{
+		if listtoedit.Items[i].ID==itemid{
+			itemtoedit = &listtoedit.Items[i]
+			break
+		}
+	}
+	if itemtoedit == nil {
+		return models.Item{}, fmt.Errorf("Item not found.")
+	}
+	if text!=nil{
+		itemtoedit.Text = *text
+	}
+	if check!=nil{
+		itemtoedit.Check = *check
+	}
+	now := time.Now()
+	itemtoedit.UpdatedAt = &now
+	listtoedit.UpdatedAt = &now
+	if err := utilities.SaveLists(lists); err != nil {
+		return models.Item{}, err
+	}
+	
+	return *itemtoedit, err
+}

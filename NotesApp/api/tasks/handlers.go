@@ -18,7 +18,7 @@ func listTasks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(tasks)
 }
 
-//POST a new task 
+//POST a new task with required Text
 func addTask(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		Name     string     `json:"name"`

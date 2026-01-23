@@ -1,53 +1,25 @@
 package main
 
 import (
-    "encoding/json"
-    "log"
-    "net/http"
-    "strconv"
+	"log"
+	"net/http"
 
-    "NotesApp/services"
+	"NotesApp/api/notes"
+	"NotesApp/api/tasks"
+	"NotesApp/api/lists"
 )
 
 func main() {
-    http.HandleFunc("/notes", notesHandler)
-    log.Println("API running on :8080")
-    log.Fatal(http.ListenAndServe(":8080", nil))
-}
+	mux := http.NewServeMux()
 
-func notesHandler(w http.ResponseWriter, r *http.Request) {
-    switch r.Method {
-    case http.MethodPost:
-        // POST for Insert New Note
-        text := r.URL.Query().Get("text")
-        note, err := services.AddNote(text)
-        if err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
-        }
-        json.NewEncoder(w).Encode(note)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("NotesApp API is running"))
+	})
 
-    case http.MethodGet:
-        // GET for list
-        notes, err := services.ListNotes()
-        if err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
-        }
-        json.NewEncoder(w).Encode(notes)
+	mux.Handle("/notes/", notes.Router())
+	mux.Handle("/tasks/", tasks.Router())
+	mux.Handle("/lists/", lists.Router())
 
-    case http.MethodDelete:
-        // DELETE for deletion of a note
-        idStr := r.URL.Query().Get("id")
-        id, _ := strconv.Atoi(idStr)
-        err := services.DeleteNote(id)
-        if err != nil {
-            http.Error(w, err.Error(), http.StatusNotFound)
-            return
-        }
-        w.WriteHeader(http.StatusNoContent)
-
-    default:
-        http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-    }
+	log.Println("API running on :8080")
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }

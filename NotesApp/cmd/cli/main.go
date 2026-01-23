@@ -63,11 +63,11 @@ Examples:
   app notes add "Make a list"
   app notes list 
   app notes delete 2
-  app list create "Groceries"
-  app list item add 1 "Buy milk"
-  app task add "Submit Report" --priority high --due 2026-02-01
-  app task delete 1
-  app list item remove 1 3
+  app lists create "Groceries"
+  app lists item add 1 "Buy milk"
+  app tasks add "Submit Report" --priority high --due 2026-02-01
+  app tasks delete 1
+  app lists item remove 1 3
 
 `)
 }
