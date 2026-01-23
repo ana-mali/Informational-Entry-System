@@ -6,7 +6,20 @@ import (
 	"strconv"
 	"time"
 	"flag"
+	"strings"
 )
+
+type stringSliceFlag []string
+
+func (s *stringSliceFlag) String() string {
+	return strings.Join(*s, ", ")
+}
+
+func (s *stringSliceFlag) Set(value string) error {
+	*s = append(*s, value)
+	return nil
+}
+
 
 func HandleTasks(cmd string, args []string) {
 	switch cmd {
@@ -118,32 +131,39 @@ func HandleTasks(cmd string, args []string) {
 		name := fs.String("name", "", "Edit task name")
 		priority := fs.String("priority", "", "Edit task priority")
 		dueStr := fs.String("due", "", "Edit task due date (YYYY-MM-DD)")
-		clear := fs.String("clear", "", "Clear a field (priority | due)")
+		var clearFields stringSliceFlag
+		fs.Var(&clearFields, "clear", "Clear a field (can be repeated: priority | due)")
+
 		if err := fs.Parse(args[1:]); err != nil {
 			fmt.Println("Error parsing flags:", err)
 			return
 		}
+		clearPriority := false
+		clearDue := false
 
+		for _, field := range clearFields {
+			switch field {
+			case "priority":
+				clearPriority = true
+			case "due":
+				clearDue = true
+			default:
+				fmt.Printf("Unknown clear field: %s\n", field)
+				return
+			}
+		}
 		var namePtr *string
 		if *name != "" {
 			namePtr = name
 		}
 
 		var priorityPtr *string
-		clearPriority := false
-		if *clear == "priority" {
-			clearPriority = true
-		} else if *priority != "" {
+		if !clearPriority && *priority != "" {
 			priorityPtr = priority
 		}
 
-
 		var duePtr *time.Time
-		clearDue := false
-
-		if *clear == "due" {
-			clearDue = true
-		} else if *dueStr != "" {
+		if !clearDue && *dueStr != "" {
 			parsed, err := time.Parse("2006-01-02", *dueStr)
 			if err != nil {
 				fmt.Println("Invalid date format. Use YYYY-MM-DD.")
@@ -152,9 +172,6 @@ func HandleTasks(cmd string, args []string) {
 			duePtr = &parsed
 		}
 
-		if *clear == "due" {
-			clearDue = true
-		}
 		if namePtr == nil && priorityPtr == nil && duePtr == nil && !clearPriority && !clearDue {
 			fmt.Println("No changes provided. Use flags to edit the task.")
 			return
